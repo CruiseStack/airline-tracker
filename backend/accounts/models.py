@@ -15,6 +15,14 @@ class CustomUser(AbstractUser):
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username', 'first_name', 'last_name']
 
+    passenger = models.OneToOneField(
+        'passenger.Passenger',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='user'
+    )
+
     def __str__(self):
         return self.email
 
