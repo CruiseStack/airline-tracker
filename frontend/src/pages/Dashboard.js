@@ -1,5 +1,6 @@
 import React from 'react';
 import { useAuth } from '../context/AuthContext';
+import { Link } from 'react-router-dom';
 
 const Dashboard = () => {
   const { user } = useAuth();
@@ -117,9 +118,12 @@ const Dashboard = () => {
             </div>
             <div className="p-6">
               <div className="space-y-4">
-                <button className="w-full bg-airline-blue hover:bg-airline-navy text-white py-3 px-4 rounded-lg font-medium transition-colors">
-                  Book a Flight
-                </button>
+                <Link 
+                  to="/search-flights"
+                  className="w-full bg-airline-blue hover:bg-airline-navy text-white py-3 px-4 rounded-lg font-medium transition-colors block text-center"
+                >
+                  Search Flights
+                </Link>
                 <button className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 py-3 px-4 rounded-lg font-medium transition-colors">
                   Check Flight Status
                 </button>

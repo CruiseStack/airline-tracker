@@ -21,8 +21,14 @@ const Home = () => {
               {!user ? (
                 <>
                   <Link
-                    to="/signup"
+                    to="/search-flights"
                     className="bg-white text-airline-blue px-8 py-3 rounded-lg text-lg font-semibold hover:bg-gray-100 transition-colors inline-block"
+                  >
+                    Search Flights
+                  </Link>
+                  <Link
+                    to="/signup"
+                    className="border-2 border-white text-white px-8 py-3 rounded-lg text-lg font-semibold hover:bg-white hover:text-airline-blue transition-colors inline-block"
                   >
                     Get Started
                   </Link>

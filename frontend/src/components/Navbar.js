@@ -28,6 +28,12 @@ const Navbar = () => {
             {user ? (
               <>
                 <Link
+                  to="/search-flights"
+                  className="text-gray-700 hover:text-airline-blue px-3 py-2 rounded-md text-sm font-medium transition-colors"
+                >
+                  Search Flights
+                </Link>
+                <Link
                   to="/dashboard"
                   className="text-gray-700 hover:text-airline-blue px-3 py-2 rounded-md text-sm font-medium transition-colors"
                 >
@@ -53,6 +59,12 @@ const Navbar = () => {
               </>
             ) : (
               <>
+                <Link
+                  to="/search-flights"
+                  className="text-gray-700 hover:text-airline-blue px-3 py-2 rounded-md text-sm font-medium transition-colors"
+                >
+                  Search Flights
+                </Link>
                 <Link
                   to="/login"
                   className="text-gray-700 hover:text-airline-blue px-3 py-2 rounded-md text-sm font-medium transition-colors"

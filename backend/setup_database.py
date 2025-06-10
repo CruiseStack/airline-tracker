@@ -24,6 +24,9 @@ def create_migrations():
     print("Creating migrations for accounts app...")
     execute_from_command_line(['manage.py', 'makemigrations', 'accounts'])
     
+    print("Creating migrations for flights app...")
+    execute_from_command_line(['manage.py', 'makemigrations', 'flights'])
+    
     print("Creating migrations for all apps...")
     execute_from_command_line(['manage.py', 'makemigrations'])
 
