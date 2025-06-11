@@ -22,9 +22,13 @@ const Navbar = () => {
               </div>
               <span className="text-2xl font-bold text-airline-blue">AirTracker</span>
             </Link>
-          </div>
-
-          <div className="flex items-center space-x-4">
+          </div>          <div className="flex items-center space-x-4">
+            <Link
+              to="/search-flights"
+              className="text-gray-700 hover:text-airline-blue px-3 py-2 rounded-md text-sm font-medium transition-colors"
+            >
+              Search Flights
+            </Link>
             {user ? (
               <>
                 <Link
