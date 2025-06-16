@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { flightAPI } from '../services/api';
 import { debounce } from 'lodash';
+import { useNavigate } from 'react-router-dom';
 
 const SearchFlights = () => {  // Search form state
   const [searchForm, setSearchForm] = useState({
@@ -11,6 +12,8 @@ const SearchFlights = () => {  // Search form state
       endDate: '',
     },
   });
+
+  const navigate = useNavigate();
 
   // Autocomplete suggestions
   const [suggestions, setSuggestions] = useState({
@@ -547,9 +550,12 @@ const SearchFlights = () => {  // Search form state
                         <div className="text-lg font-bold text-green-600">
                           Multiplier: {flight.price_base_multiplier}x
                         </div>
-                        <button className="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700 transition-colors">
-                          Select Flight
-                        </button>
+                        <button
+                          className="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700 transition-colors"
+                         onClick={() => navigate('/flight-info', { state: { flight } })}
+>
+                            Select Flight
+</button>
                       </div>
                     </div>
                   </div>

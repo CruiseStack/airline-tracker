@@ -9,6 +9,7 @@ import Dashboard from './pages/Dashboard';
 import Profile from './pages/Profile';
 import SearchFlights from './pages/SearchFlights';
 import ProtectedRoute from './components/ProtectedRoute';
+import FlightInfoPage from './pages/FlightInfoPage';
 
 function App() {
   return (
@@ -37,6 +38,7 @@ function App() {
                 </ProtectedRoute>
               } 
             />
+            <Route path="/flight-info" element={<FlightInfoPage />} />
           </Routes>
         </div>
       </Router>
