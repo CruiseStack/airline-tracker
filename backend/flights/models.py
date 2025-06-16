@@ -1,5 +1,7 @@
 from django.db import models
 from accounts.models import CustomUser
+from datetime import date, timedelta
+from decimal import Decimal
 
 
 class Country(models.Model):
@@ -112,6 +114,51 @@ class FlightInstance(models.Model):
 
     def __str__(self):
         return f"{self.flight.fnum} on {self.date}"
+    
+    def calculate_price(self, flight_class='Economy'):
+        """
+        Calculate dynamic price based on flight duration and days remaining to flight
+        Formula:
+        - More than 30 days: Price = FlightHours * $100
+        - Less than 30 days: Price = FlightHours * $100 + (((30-remainingDays)/30) - 1) * FlightHours * $100
+        """
+        # Get flight duration in hours
+        duration_seconds = self.flight.duration.total_seconds()
+        flight_hours = Decimal(duration_seconds / 3600)  # Convert to hours
+        
+        # Calculate days remaining to flight
+        today = date.today()
+        days_remaining = (self.date - today).days
+        
+        # Base price calculation
+        base_price = flight_hours * Decimal('100')
+        
+        if days_remaining > 30:
+            # More than 30 days - standard pricing
+            final_price = base_price
+        else:
+            # Less than 30 days - surge pricing using your exact formula
+            if days_remaining <= 0:
+                days_remaining = 0  # Handle same day or past flights
+            
+            # Your formula: Price = FlightHours * $100 + (((30-remainingDays)/30) - 1) * FlightHours * $100
+            surge_factor = (Decimal(30 - days_remaining) / Decimal('30')) - Decimal('1')
+            surge_price = surge_factor * flight_hours * Decimal('100')
+            final_price = base_price + surge_price
+        
+        # Apply price base multiplier
+        final_price = final_price * self.price_base_multiplier
+        # Apply class multiplier
+        class_multipliers = {
+            'Economy': Decimal('1.0'),
+            'Business': Decimal('2.5'),
+            'First': Decimal('4.0')
+        }
+        
+        class_multiplier = class_multipliers.get(flight_class, Decimal('1.0'))
+        final_price = final_price * class_multiplier
+        
+        return round(final_price, 2)
 
 
 class FlightClass(models.Model):
