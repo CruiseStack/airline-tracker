@@ -1,8 +1,8 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.conf import settings
 
 class Ticket(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='tickets')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='tickets')
     flight_number = models.CharField(max_length=20)
     departure = models.CharField(max_length=100)
     arrival = models.CharField(max_length=100)
