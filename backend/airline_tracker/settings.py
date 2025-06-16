@@ -37,6 +37,7 @@ LOCAL_APPS = [
     'accounts',
     'flights',
      'ticket', 
+
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
