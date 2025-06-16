@@ -52,12 +52,27 @@ class FlightInstanceSerializer(serializers.ModelSerializer):
     flight_details = FlightSerializer(source='flight', read_only=True)
     aircraft_details = AircraftSerializer(source='aircraft', read_only=True)
     
+    # Price fields for different classes
+    economy_price = serializers.SerializerMethodField()
+    business_price = serializers.SerializerMethodField()
+    first_price = serializers.SerializerMethodField()
+    
     class Meta:
         model = FlightInstance
         fields = [
             'flight', 'date', 'gate_number', 'price_base_multiplier',
-            'aircraft', 'flight_details', 'aircraft_details'
+            'aircraft', 'flight_details', 'aircraft_details',
+            'economy_price', 'business_price', 'first_price'
         ]
+    
+    def get_economy_price(self, obj):
+        return str(obj.calculate_price('Economy'))
+    
+    def get_business_price(self, obj):
+        return str(obj.calculate_price('Business'))
+    
+    def get_first_price(self, obj):
+        return str(obj.calculate_price('First'))
 
 
 class FlightSearchSerializer(serializers.Serializer):

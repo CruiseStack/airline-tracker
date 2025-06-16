@@ -249,6 +249,16 @@ const SearchFlights = () => {  // Search form state
     });
   };
 
+  // Format price
+  const formatPrice = (price) => {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    }).format(price);
+  };
+
   // Get today's date for min date input
   const today = new Date().toISOString().split('T')[0];
 
@@ -537,9 +547,7 @@ const SearchFlights = () => {  // Search form state
                         {flight.flight_details.destination_city}
                       </div>
                     </div>
-                  </div>
-
-                  <div className="mt-4 pt-4 border-t border-gray-200">
+                  </div>                  <div className="mt-4 pt-4 border-t border-gray-200">
                     <div className="flex items-center justify-between text-sm">
                       <div className="text-gray-500">
                         Aircraft: {flight.aircraft_details.register} • 
@@ -547,8 +555,23 @@ const SearchFlights = () => {  // Search form state
                         Economy: {flight.aircraft_details.seats_economy} seats
                       </div>
                       <div className="flex items-center space-x-4">
-                        <div className="text-lg font-bold text-green-600">
-                          Multiplier: {flight.price_base_multiplier}x
+                        <div className="text-right">
+                          <div className="text-lg font-bold text-green-600">
+                            {formatPrice(flight.economy_price)}
+                          </div>
+                          <div className="text-xs text-gray-500">Economy</div>
+                        </div>
+                        <div className="text-right">
+                          <div className="text-lg font-bold text-blue-600">
+                            {formatPrice(flight.business_price)}
+                          </div>
+                          <div className="text-xs text-gray-500">Business</div>
+                        </div>
+                        <div className="text-right">
+                          <div className="text-lg font-bold text-purple-600">
+                            {formatPrice(flight.first_price)}
+                          </div>
+                          <div className="text-xs text-gray-500">First</div>
                         </div>
                         <button
                           className="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700 transition-colors"
