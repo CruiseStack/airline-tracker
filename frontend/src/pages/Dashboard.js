@@ -31,6 +31,13 @@ const Dashboard = () => {
       });
   }, [token]);
 
+  const totalMiles = tickets.reduce(
+    (sum, ticket) => sum + ticket.paid_points,
+    0
+  );
+  const uniqueDestinations = new Set(tickets.map((ticket) => ticket.arrival));
+  const destinationsVisited = uniqueDestinations.size;
+
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
@@ -109,7 +116,9 @@ const Dashboard = () => {
                     <dt className="text-sm font-medium text-gray-500 truncate">
                       Miles Earned
                     </dt>
-                    <dd className="text-lg font-medium text-gray-900">0</dd>
+                    <dd className="text-lg font-medium text-gray-900">
+                      {loading ? "Loading..." : error ? "Error" : totalMiles}
+                    </dd>
                   </dl>
                 </div>
               </div>
@@ -141,7 +150,13 @@ const Dashboard = () => {
                     <dt className="text-sm font-medium text-gray-500 truncate">
                       Destinations Visited
                     </dt>
-                    <dd className="text-lg font-medium text-gray-900">0</dd>
+                    <dd className="text-lg font-medium text-gray-900">
+                      {loading
+                        ? "Loading..."
+                        : error
+                        ? "Error"
+                        : destinationsVisited}
+                    </dd>
                   </dl>
                 </div>
               </div>
