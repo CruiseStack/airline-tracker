@@ -8,6 +8,7 @@ const Dashboard = () => {
   const [tickets, setTickets] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [selectedTicket, setSelectedTicket] = useState(null);
 
   useEffect(() => {
     if (!user) return;
@@ -33,6 +34,7 @@ const Dashboard = () => {
     (sum, ticket) => sum + ticket.paid_points,
     0
   );
+
   const navigate = useNavigate();
   const uniqueDestinations = new Set(tickets.map((ticket) => ticket.arrival));
   const destinationsVisited = uniqueDestinations.size;
@@ -195,105 +197,96 @@ const Dashboard = () => {
                     Your flight history will appear here
                   </p>
                 </div>
-              )}{" "}
+              )}
+
               {!loading && !error && tickets.length > 0 && (
-                <div className="space-y-4">
+                <div className="space-y-2">
                   {tickets.map((ticket) => (
-                    <div
+                    <button
                       key={ticket.id}
-                      className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
+                      onClick={() => setSelectedTicket(ticket)}
+                      className="w-full text-left px-4 py-2 rounded-md bg-gray-100 hover:bg-gray-200 transition font-medium text-sm text-gray-800"
                     >
-                      <div className="flex justify-between items-start">
-                        <div className="flex-1">
-                          <div className="flex items-center justify-between mb-2">
-                            <h4 className="text-lg font-semibold text-gray-900">
-                              Flight {ticket.flight_number}
-                            </h4>
-                            <span
-                              className={`px-2 py-1 rounded-full text-xs font-medium ${
-                                ticket.is_paid
-                                  ? "bg-green-100 text-green-800"
-                                  : "bg-yellow-100 text-yellow-800"
-                              }`}
-                            >
-                              {ticket.is_paid ? "Paid" : "Pending Payment"}
-                            </span>
-                          </div>
-                          <div className="grid grid-cols-2 gap-4 text-sm text-gray-600 mb-3">
-                            <div>
-                              <p className="font-medium">From</p>
-                              <p>{ticket.departure}</p>
-                            </div>
-                            <div>
-                              <p className="font-medium">To</p>
-                              <p>{ticket.arrival}</p>
-                            </div>
-                            <div>
-                              <p className="font-medium">Departure</p>
-                              <p>
-                                {new Date(
-                                  ticket.departure_time
-                                ).toLocaleString()}
-                              </p>
-                            </div>
-                            <div>
-                              <p className="font-medium">Arrival</p>
-                              <p>
-                                {new Date(ticket.arrival_time).toLocaleString()}
-                              </p>
-                            </div>
-                          </div>
-                          <div className="flex justify-between items-center text-sm">
-                            <div>
-                              <span className="font-medium">Seat:</span>{" "}
-                              {ticket.seat_number}
-                            </div>
-                            <div>
-                              <span className="font-medium">Price:</span> $
-                              {ticket.price}
-                            </div>
-                            {ticket.paid_points > 0 && (
-                              <div>
-                                <span className="font-medium">
-                                  Points Used:
-                                </span>{" "}
-                                {ticket.paid_points}
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
+                      ✈️ Flight {ticket.flight_number}
+                    </button>
                   ))}
                 </div>
               )}
             </div>
           </div>
 
-          {/* Quick Actions */}
+          {/* Ticket Area */}
           <div className="bg-white shadow rounded-lg">
             <div className="px-6 py-4 border-b border-gray-200">
-              <h3 className="text-lg font-medium text-gray-900">
-                Quick Actions
-              </h3>
+              <h3 className="text-lg font-medium text-gray-900">Tickets</h3>
             </div>
-            <div className="p-6">
-              <div className="space-y-4">
-                <button
-                  onClick={() => navigate("/search-flights")}
-                  className="w-full bg-airline-blue hover:bg-airline-navy text-white py-3 px-4 rounded-lg font-medium transition-colors"
-                >
-                  Book a Flight
-                </button>
-                <button className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 py-3 px-4 rounded-lg font-medium transition-colors">
-                  Check Flight Status
-                </button>
-                <button className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 py-3 px-4 rounded-lg font-medium transition-colors">
-                  Manage Booking
-                </button>
-                <button className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 py-3 px-4 rounded-lg font-medium transition-colors">
-                  View Miles Balance
-                </button>
+            <div className="p-6 space-y-4">
+              {/* Ticket */}
+              <div className="mt-4">
+                <h4 className="text-md font-semibold text-gray-800 mb-2">
+                  Your Tickets
+                </h4>
+
+                {tickets.length === 0 ? (
+                  <p className="text-sm text-gray-500">
+                    You have no tickets yet.
+                  </p>
+                ) : selectedTicket ? (
+                  <ul className="space-y-2 max-h-60 overflow-y-auto">
+                    <li
+                      key={selectedTicket.id}
+                      className="border p-3 rounded-md text-sm text-gray-700 bg-gray-50"
+                    >
+                      ✈️ {selectedTicket.departure} → {selectedTicket.arrival}
+                      <span className="block text-xs text-gray-500">
+                        {new Date(
+                          selectedTicket.departure_time
+                        ).toLocaleDateString()}
+                      </span>
+                      <p className="mt-2 text-sm">
+                        <strong>Flight:</strong> {selectedTicket.flight_number}
+                        <br />
+                        <strong>From:</strong> {selectedTicket.departure}
+                        <br />
+                        <strong>To:</strong> {selectedTicket.arrival}
+                        <br />
+                        <strong>Departure:</strong>{" "}
+                        {new Date(
+                          selectedTicket.departure_time
+                        ).toLocaleString()}
+                        <br />
+                        <strong>Arrival:</strong>{" "}
+                        {new Date(selectedTicket.arrival_time).toLocaleString()}
+                        <br />
+                        <strong>Seat:</strong> {selectedTicket.seat_number}
+                        <br />
+                        <strong>Price:</strong> ${selectedTicket.price}
+                        <br />
+                        {selectedTicket.paid_points > 0 && (
+                          <>
+                            <strong>Points Used:</strong>{" "}
+                            {selectedTicket.paid_points}
+                            <br />
+                          </>
+                        )}
+                        <strong>Status:</strong>{" "}
+                        <span
+                          className={
+                            selectedTicket.is_paid
+                              ? "text-green-600"
+                              : "text-yellow-600"
+                          }
+                        >
+                          {selectedTicket.is_paid ? "Paid" : "Pending Payment"}
+                        </span>
+                      </p>
+                    </li>
+                  </ul>
+                ) : (
+                  <p className="text-sm text-gray-500">
+                    Select a flight from the list to view details.
+                  </p>
+                )}
               </div>
             </div>
           </div>
