@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 import { ticketAPI } from "../services/api";
+import { useNavigate } from "react-router-dom";
 
 const Dashboard = () => {
   const { user, token } = useAuth();
@@ -18,8 +19,8 @@ const Dashboard = () => {
         setTickets(data);
         setError(null);
       } catch (err) {
-        setError('Failed to fetch tickets');
-        console.error('Error fetching tickets:', err);
+        setError("Failed to fetch tickets");
+        console.error("Error fetching tickets:", err);
       } finally {
         setLoading(false);
       }
@@ -32,6 +33,7 @@ const Dashboard = () => {
     (sum, ticket) => sum + ticket.paid_points,
     0
   );
+  const navigate = useNavigate();
   const uniqueDestinations = new Set(tickets.map((ticket) => ticket.arrival));
   const destinationsVisited = uniqueDestinations.size;
 
@@ -193,7 +195,8 @@ const Dashboard = () => {
                     Your flight history will appear here
                   </p>
                 </div>
-              )}              {!loading && !error && tickets.length > 0 && (
+              )}{" "}
+              {!loading && !error && tickets.length > 0 && (
                 <div className="space-y-4">
                   {tickets.map((ticket) => (
                     <div
@@ -227,23 +230,34 @@ const Dashboard = () => {
                             </div>
                             <div>
                               <p className="font-medium">Departure</p>
-                              <p>{new Date(ticket.departure_time).toLocaleString()}</p>
+                              <p>
+                                {new Date(
+                                  ticket.departure_time
+                                ).toLocaleString()}
+                              </p>
                             </div>
                             <div>
                               <p className="font-medium">Arrival</p>
-                              <p>{new Date(ticket.arrival_time).toLocaleString()}</p>
+                              <p>
+                                {new Date(ticket.arrival_time).toLocaleString()}
+                              </p>
                             </div>
                           </div>
                           <div className="flex justify-between items-center text-sm">
                             <div>
-                              <span className="font-medium">Seat:</span> {ticket.seat_number}
+                              <span className="font-medium">Seat:</span>{" "}
+                              {ticket.seat_number}
                             </div>
                             <div>
-                              <span className="font-medium">Price:</span> ${ticket.price}
+                              <span className="font-medium">Price:</span> $
+                              {ticket.price}
                             </div>
                             {ticket.paid_points > 0 && (
                               <div>
-                                <span className="font-medium">Points Used:</span> {ticket.paid_points}
+                                <span className="font-medium">
+                                  Points Used:
+                                </span>{" "}
+                                {ticket.paid_points}
                               </div>
                             )}
                           </div>
@@ -265,7 +279,10 @@ const Dashboard = () => {
             </div>
             <div className="p-6">
               <div className="space-y-4">
-                <button className="w-full bg-airline-blue hover:bg-airline-navy text-white py-3 px-4 rounded-lg font-medium transition-colors">
+                <button
+                  onClick={() => navigate("/search-flights")}
+                  className="w-full bg-airline-blue hover:bg-airline-navy text-white py-3 px-4 rounded-lg font-medium transition-colors"
+                >
                   Book a Flight
                 </button>
                 <button className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 py-3 px-4 rounded-lg font-medium transition-colors">
