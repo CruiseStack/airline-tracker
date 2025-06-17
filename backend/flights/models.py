@@ -182,28 +182,6 @@ class Payment(models.Model):
         return f"Payment {self.payment_number}: ${self.total}"
 
 
-class Ticket(models.Model):
-    CHECKIN_STATUS_CHOICES = [
-        ('not_checked_in', 'Not Checked In'),
-        ('checked_in', 'Checked In'),
-        ('boarded', 'Boarded'),
-    ]
-    
-    ticket_number = models.CharField(max_length=20, primary_key=True)
-    PNR_number = models.CharField(max_length=10)
-    checkin_status = models.CharField(max_length=20, choices=CHECKIN_STATUS_CHOICES, default='not_checked_in')
-    seat_number = models.CharField(max_length=5)
-    extra_baggage = models.IntegerField(default=0)  # in kg
-    ticketing_timestamp = models.DateTimeField(auto_now_add=True)
-    flight_instance = models.ForeignKey(FlightInstance, on_delete=models.CASCADE, related_name='tickets')
-    flight_class = models.ForeignKey(FlightClass, on_delete=models.CASCADE, related_name='tickets')
-    passengers = models.ManyToManyField(Passenger, related_name='tickets')
-    payment = models.OneToOneField(Payment, on_delete=models.CASCADE, related_name='ticket')
-
-    def __str__(self):
-        return f"Ticket {self.ticket_number} - {self.flight_instance}"
-
-
 class CaregiverInfant(models.Model):
     caregiver = models.ForeignKey(Passenger, on_delete=models.CASCADE, related_name='infants')
     infant = models.ForeignKey(Passenger, on_delete=models.CASCADE, related_name='caregivers')

@@ -1,19 +1,29 @@
 from django.db import models
 from django.conf import settings
+from flights.models import FlightInstance, FlightClass, Passenger, Payment
 
 class Ticket(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='tickets')
-    flight_number = models.CharField(max_length=20)
-    departure = models.CharField(max_length=100)
-    arrival = models.CharField(max_length=100)
-    departure_time = models.DateTimeField()
-    arrival_time = models.DateTimeField()
+    CHECKIN_STATUS_CHOICES = [
+        ('not_checked_in', 'Not Checked In'),
+        ('checked_in', 'Checked In'),
+        ('boarded', 'Boarded'),
+    ]
+    
+    ticket_number = models.CharField(max_length=20, primary_key=True)
+    PNR_number = models.CharField(max_length=20)
+    checkin_status = models.CharField(max_length=20, choices=CHECKIN_STATUS_CHOICES, default='not_checked_in')
     seat_number = models.CharField(max_length=10)
-    price = models.DecimalField(max_digits=8, decimal_places=2)
-    is_paid = models.BooleanField(default=False)
-    paid_cash = models.DecimalField(max_digits=8, decimal_places=2, default=0)
-    paid_points = models.IntegerField(default=0)
-    created_at = models.DateTimeField(auto_now_add=True)
+    extra_baggage = models.BooleanField(default=False)
+    ticketing_timestamp = models.DateTimeField(auto_now_add=True)
+    
+    # Foreign key relationships
+    flight_instance = models.ForeignKey(FlightInstance, on_delete=models.CASCADE, related_name='tickets')
+    flight_class = models.ForeignKey(FlightClass, on_delete=models.CASCADE, related_name='tickets')
+    passenger = models.ForeignKey(Passenger, on_delete=models.CASCADE, related_name='tickets')
+    payment = models.ForeignKey(Payment, on_delete=models.CASCADE, related_name='ticket')
+    
+    # User who booked the ticket
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='booked_tickets')
 
     def __str__(self):
-        return f"{self.user.username} - {self.flight_number}"
+        return f"Ticket {self.ticket_number} - {self.flight_instance} - {self.user.username}"

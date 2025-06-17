@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from .models import (
     Country, City, Airport, Flight, FlightInstance, 
-    Aircraft, FlightClass, Passenger, Ticket, Payment
+    Aircraft, FlightClass, Passenger, Payment
 )
 
 

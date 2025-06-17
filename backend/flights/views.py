@@ -9,7 +9,7 @@ import random
 
 from .models import (
     Country, City, Airport, Flight, FlightInstance, 
-    Aircraft, FlightClass, Passenger, Ticket, Payment
+    Aircraft, FlightClass, Passenger, Payment
 )
 from .serializers import (
     CountrySerializer, CitySerializer, AirportSerializer,
