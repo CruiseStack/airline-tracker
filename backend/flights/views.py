@@ -211,3 +211,38 @@ def get_random_flights(request):
         'total': total_count,
         'page_size': page_size
     })
+
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def get_popular_destination_flight(request):
+    """Get a random flight to the most popular destination (destination with most flights)"""
+    from django.db.models import Count
+      # Find the most popular destination (city with most flights going to it)
+    popular_destination = Flight.objects.values(
+        'destination__city__city_name',
+        'destination__city__city_id'    ).annotate(
+        flight_count=Count('fnum')
+    ).order_by('-flight_count').first()
+    
+    if not popular_destination:
+        return Response({'results': []})
+      # Get a random flight instance to that popular destination
+    popular_flights = FlightInstance.objects.filter(
+        flight__destination__city__city_id=popular_destination['destination__city__city_id']
+    ).select_related(
+        'flight__origin__city__country',
+        'flight__destination__city__country',
+        'aircraft'
+    ).order_by('?')[:1]  # Get one random flight
+    
+    if not popular_flights:
+        return Response({'results': []})
+    
+    serializer = FlightInstanceSerializer(popular_flights, many=True)
+    
+    return Response({
+        'results': serializer.data,
+        'popular_destination': popular_destination['destination__city__city_name'],
+        'flight_count_to_destination': popular_destination['flight_count']
+    })

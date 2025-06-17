@@ -63,6 +63,12 @@ export const flightAPI = {
     });
     return response.data;
   },
+
+  // Get popular destination flight
+  getPopularDestinationFlight: async () => {
+    const response = await api.get('/flights/popular-destination-flight/');
+    return response.data;
+  },
 };
 
 // Ticket API functions

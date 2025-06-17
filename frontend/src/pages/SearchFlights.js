@@ -19,9 +19,10 @@ const SearchFlights = () => {  // Search form state
   const [suggestions, setSuggestions] = useState({
     origin: [],
     destination: [],
-  });
-  // Flight results
+  });  // Flight results
   const [flights, setFlights] = useState([]);
+  const [popularFlight, setPopularFlight] = useState(null);
+  const [popularDestination, setPopularDestination] = useState('');
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const [page, setPage] = useState(1);
@@ -169,7 +170,6 @@ const SearchFlights = () => {  // Search form state
       setLoading(false);
     }
   };
-
   // Load random flights
   const loadRandomFlights = async () => {
     setLoading(true);
@@ -181,6 +181,19 @@ const SearchFlights = () => {  // Search form state
       console.error('Error loading random flights:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  // Load popular destination flight
+  const loadPopularDestinationFlight = async () => {
+    try {
+      const data = await flightAPI.getPopularDestinationFlight();
+      if (data.results && data.results.length > 0) {
+        setPopularFlight(data.results[0]);
+        setPopularDestination(data.popular_destination);
+      }
+    } catch (error) {
+      console.error('Error loading popular destination flight:', error);
     }
   };
 
@@ -205,10 +218,10 @@ const SearchFlights = () => {  // Search form state
       }
     }
   }, [loading, hasMore, isSearchMode, page]);
-
   // Load initial random flights
   useEffect(() => {
     loadRandomFlights();
+    loadPopularDestinationFlight();
   }, []);
   // Set up scroll listener
   useEffect(() => {
@@ -490,11 +503,89 @@ const SearchFlights = () => {  // Search form state
             {flights.length > 0 && (
               <span className="text-gray-600">{flights.length} flights found</span>
             )}
-          </div>
-
-          {flights.length === 0 && !loading && (
+          </div>          {flights.length === 0 && !loading && (
             <div className="text-center py-12">
               <div className="text-gray-500 text-lg">Loading flights...</div>
+            </div>
+          )}
+
+          {/* Popular Destination Flight - only show when not in search mode */}
+          {!isSearchMode && popularFlight && (
+            <div className="bg-gradient-to-r from-slate-800 to-slate-900 border-2 border-yellow-400 rounded-lg shadow-2xl p-6 hover:shadow-3xl transition-shadow mb-6">
+              <div className="flex justify-between items-start">
+                <div className="flex-1">
+                  <div className="flex items-center space-x-4 mb-4">                    <div className="px-4 py-2 bg-yellow-400 text-black text-sm font-bold rounded-full shadow-lg">
+                      🏆 POPULAR DESTINATION
+                    </div>                    <div className="text-lg font-semibold text-white">
+                      {popularFlight.flight_details.fnum}
+                    </div>
+                    <div className="text-sm text-gray-300">
+                      {formatDate(popularFlight.date)}
+                    </div>
+                    <div className="text-sm text-gray-300">
+                      Gate {popularFlight.gate_number}
+                    </div>
+                    <div className="px-3 py-1 bg-yellow-500 bg-opacity-20 text-yellow-300 text-xs rounded-full border border-yellow-400">
+                      Most flights to {popularDestination}
+                    </div>
+                  </div>                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center space-x-8">                      <div className="text-center">
+                        <div className="text-xl font-bold text-white">
+                          {popularFlight.flight_details.origin_city}
+                        </div>
+                        <div className="text-sm text-gray-400">
+                          {popularFlight.flight_details.origin}
+                        </div>
+                      </div>
+                      
+                      <div className="flex-1 relative">
+                        <div className="absolute inset-0 flex items-center">
+                          <div className="w-full border-t-2 border-yellow-400"></div>
+                        </div>
+                        <div className="relative flex justify-center text-2xl">
+                          ✈️
+                        </div>
+                      </div>
+                      
+                      <div className="text-center">
+                        <div className="text-xl font-bold text-white">
+                          {popularFlight.flight_details.destination_city}
+                        </div>
+                        <div className="text-sm text-gray-400">
+                          {popularFlight.flight_details.destination}
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="text-right">                      <div className="text-2xl font-bold text-yellow-400">
+                        ${popularFlight.economy_price}
+                      </div>
+                      <div className="text-sm text-gray-300">
+                        Duration: {formatDuration(popularFlight.flight_details.duration_minutes)}
+                      </div>
+                    </div>
+                  </div>                  <div className="flex items-center justify-between text-sm text-gray-300">
+                    <div>
+                      <span className="font-medium text-white">Aircraft:</span> {popularFlight.aircraft_details.model}
+                    </div>
+                    <div>
+                      <span className="font-medium text-white">Capacity:</span> {popularFlight.aircraft_details.seats_economy + popularFlight.aircraft_details.seats_business} passengers
+                    </div>
+                  </div>
+                </div>
+                
+                <button
+                  onClick={() => navigate('/flight-info', { 
+                    state: { 
+                      flight: popularFlight,
+                      searchData: searchForm 
+                    } 
+                  })}
+                  className="ml-6 bg-yellow-500 hover:bg-yellow-600 text-gray-900 font-semibold py-3 px-6 rounded-lg transition duration-200 shadow-md hover:shadow-lg"
+                >
+                  Book Popular Flight
+                </button>
+              </div>
             </div>
           )}
 

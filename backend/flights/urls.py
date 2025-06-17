@@ -7,4 +7,5 @@ urlpatterns = [
     path('search-airports/', views.search_airports, name='search_airports'),
     path('search-flights/', views.search_flights, name='search_flights'),
     path('random-flights/', views.get_random_flights, name='random_flights'),
+    path('popular-destination-flight/', views.get_popular_destination_flight, name='popular_destination_flight'),
 ]
