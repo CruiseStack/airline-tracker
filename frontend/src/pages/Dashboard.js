@@ -31,9 +31,8 @@ const Dashboard = () => {
     };
 
     fetchTickets();
-  }, [user]);
-  const totalMiles = tickets.reduce(
-    (sum, ticket) => sum + (ticket.payment_details?.paid_points || 0),
+  }, [user]);  const totalMiles = tickets.reduce(
+    (sum, ticket) => sum + (ticket.miles_earned || 0),
     0
   );
   const uniqueDestinations = new Set(

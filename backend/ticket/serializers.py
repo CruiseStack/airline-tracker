@@ -7,6 +7,7 @@ class TicketSerializer(serializers.ModelSerializer):
     flight_class_details = serializers.SerializerMethodField()
     payment_details = serializers.SerializerMethodField()
     passenger_details = serializers.SerializerMethodField()
+    miles_earned = serializers.SerializerMethodField()
     
     class Meta:
         model = Ticket
@@ -14,7 +15,7 @@ class TicketSerializer(serializers.ModelSerializer):
             'ticket_number', 'PNR_number', 'checkin_status', 'seat_number',
             'extra_baggage', 'ticketing_timestamp', 'flight_instance',
             'flight_class', 'payment', 'user', 'passenger', 'flight_instance_details',
-            'flight_class_details', 'payment_details', 'passenger_details'
+            'flight_class_details', 'payment_details', 'passenger_details', 'miles_earned'
         ]
         read_only_fields = ['user', 'ticketing_timestamp']
         
@@ -61,6 +62,29 @@ class TicketSerializer(serializers.ModelSerializer):
                 'id_number': obj.passenger.id_number
             }
         return None
+
+    def get_miles_earned(self, obj):
+        """Calculate miles earned based on flight duration and class multiplier"""
+        if obj.flight_instance and obj.flight_instance.flight.duration:
+            # Get flight duration in hours
+            duration = obj.flight_instance.flight.duration
+            duration_hours = duration.total_seconds() / 3600
+            
+            # Base miles calculation: 1 mile per minute of flight time
+            base_miles = int(duration_hours * 60)
+            
+            # Class multiplier for miles
+            class_multiplier = 1.0  # Default for economy
+            if obj.flight_class:
+                if obj.flight_class.class_type.lower() == 'business':
+                    class_multiplier = 1.5
+                elif obj.flight_class.class_type.lower() == 'first':
+                    class_multiplier = 2.0
+            
+            # Calculate total miles earned
+            miles_earned = int(base_miles * class_multiplier)
+            return miles_earned
+        return 0
 
 class PaymentSerializer(serializers.Serializer):
     paid_cash = serializers.DecimalField(max_digits=10, decimal_places=2)
