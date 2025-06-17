@@ -386,19 +386,16 @@ const Dashboard = () => {
                         </div>
                       </div>
                     )}
-                  </div>
-
-                  {/* Passenger Information */}
-                  {selectedTicket.passenger_details && selectedTicket.passenger_details.length > 0 && (
+                  </div>                  {/* Passenger Information */}
+                  {selectedTicket.user_details && (
                     <div>
-                      <h4 className="text-md font-semibold text-gray-900 mb-2">Passengers</h4>
-                      <div className="space-y-2">
-                        {selectedTicket.passenger_details.map((passenger, index) => (
-                          <div key={index} className="text-sm bg-gray-50 p-2 rounded">
-                            <p className="font-medium">{passenger.first_name} {passenger.last_name}</p>
-                            <p className="text-gray-600">{passenger.email}</p>
-                          </div>
-                        ))}
+                      <h4 className="text-md font-semibold text-gray-900 mb-2">Passenger</h4>
+                      <div className="text-sm bg-gray-50 p-2 rounded">
+                        <p className="font-medium">{selectedTicket.user_details.first_name} {selectedTicket.user_details.last_name}</p>
+                        <p className="text-gray-600">{selectedTicket.user_details.email}</p>
+                        {selectedTicket.user_details.phone_number && (
+                          <p className="text-gray-600">{selectedTicket.user_details.phone_number}</p>
+                        )}
                       </div>
                     </div>
                   )}

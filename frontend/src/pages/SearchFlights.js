@@ -227,17 +227,28 @@ const SearchFlights = () => {  // Search form state
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [showDatePicker]);
-
-  // Format duration
+  // Format duration from minutes
   const formatDuration = (duration) => {
-    if (!duration) return 'N/A';
-    const match = duration.match(/(\d+):(\d+):(\d+)/);
-    if (match) {
-      const hours = parseInt(match[1]);
-      const minutes = parseInt(match[2]);
+    if (!duration || duration === 0) return 'N/A';
+    
+    // If it's a number (minutes), convert to hours and minutes
+    if (typeof duration === 'number') {
+      const hours = Math.floor(duration / 60);
+      const minutes = duration % 60;
       return `${hours}h ${minutes}m`;
     }
-    return duration;
+    
+    // If it's still the old string format (fallback)
+    if (typeof duration === 'string') {
+      const match = duration.match(/(\d+):(\d+):(\d+)/);
+      if (match) {
+        const hours = parseInt(match[1]);
+        const minutes = parseInt(match[2]);
+        return `${hours}h ${minutes}m`;
+      }
+    }
+    
+    return 'N/A';
   };
 
   // Format date
@@ -521,9 +532,8 @@ const SearchFlights = () => {  // Search form state
                     </div>
 
                     <div className="text-center">
-                      <div className="text-sm text-gray-500">Duration</div>
-                      <div className="font-medium text-lg">
-                        {formatDuration(flight.flight_details.duration)}
+                      <div className="text-sm text-gray-500">Duration</div>                      <div className="font-medium text-lg">
+                        {formatDuration(flight.flight_details.duration_minutes)}
                       </div>
                       <div className="flex items-center justify-center my-2">
                         <div className="h-px bg-gray-300 flex-1"></div>

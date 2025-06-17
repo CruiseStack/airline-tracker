@@ -1,6 +1,6 @@
 from django.db import models
 from django.conf import settings
-from flights.models import FlightInstance, FlightClass, Passenger, Payment
+from flights.models import FlightInstance, FlightClass, Payment, Passenger
 
 class Ticket(models.Model):
     CHECKIN_STATUS_CHOICES = [
@@ -15,15 +15,15 @@ class Ticket(models.Model):
     seat_number = models.CharField(max_length=10)
     extra_baggage = models.BooleanField(default=False)
     ticketing_timestamp = models.DateTimeField(auto_now_add=True)
-    
-    # Foreign key relationships
+      # Foreign key relationships
     flight_instance = models.ForeignKey(FlightInstance, on_delete=models.CASCADE, related_name='tickets')
     flight_class = models.ForeignKey(FlightClass, on_delete=models.CASCADE, related_name='tickets')
-    passenger = models.ForeignKey(Passenger, on_delete=models.CASCADE, related_name='tickets')
-    payment = models.ForeignKey(Payment, on_delete=models.CASCADE, related_name='ticket')
+    payment = models.ForeignKey(Payment, on_delete=models.CASCADE, related_name='ticket', null=True, blank=True)
+    passenger = models.ForeignKey(Passenger, on_delete=models.CASCADE, related_name='tickets', null=True, blank=True)
     
-    # User who booked the ticket
+    # User who booked the ticket (may be different from passenger)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='booked_tickets')
 
     def __str__(self):
-        return f"Ticket {self.ticket_number} - {self.flight_instance} - {self.user.username}"
+        passenger_name = f"{self.passenger.first_name} {self.passenger.last_name}" if self.passenger else "No passenger"
+        return f"Ticket {self.ticket_number} - {self.flight_instance} - {passenger_name}"

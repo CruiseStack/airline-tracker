@@ -39,13 +39,20 @@ class FlightSerializer(serializers.ModelSerializer):
     destination_name = serializers.CharField(source='destination.name', read_only=True)
     origin_city = serializers.CharField(source='origin.city.city_name', read_only=True)
     destination_city = serializers.CharField(source='destination.city.city_name', read_only=True)
+    duration_minutes = serializers.SerializerMethodField()
     
     class Meta:
         model = Flight
         fields = [
-            'fnum', 'duration', 'origin', 'destination',
+            'fnum', 'duration', 'duration_minutes', 'origin', 'destination',
             'origin_name', 'destination_name', 'origin_city', 'destination_city'
         ]
+    
+    def get_duration_minutes(self, obj):
+        """Convert duration to total minutes for frontend"""
+        if obj.duration:
+            return int(obj.duration.total_seconds() / 60)
+        return 0
 
 
 class FlightInstanceSerializer(serializers.ModelSerializer):
@@ -60,7 +67,7 @@ class FlightInstanceSerializer(serializers.ModelSerializer):
     class Meta:
         model = FlightInstance
         fields = [
-            'flight', 'date', 'gate_number', 'price_base_multiplier',
+            'id', 'flight', 'date', 'gate_number', 'price_base_multiplier',
             'aircraft', 'flight_details', 'aircraft_details',
             'economy_price', 'business_price', 'first_price'
         ]

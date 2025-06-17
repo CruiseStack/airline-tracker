@@ -1,13 +1,9 @@
-import axios from 'axios';
-
-const BASE_URL = 'http://localhost:8000/api/tickets/';
+import { ticketAPI } from '../services/api';
 
 export const createTicket = async (ticketData) => {
-  const response = await axios.post(BASE_URL, ticketData);
-  return response.data;
+  return await ticketAPI.createTicket(ticketData);
 };
 
 export const payTicket = async (ticketId, paymentData) => {
-  const response = await axios.post(`${BASE_URL}${ticketId}/pay/`, paymentData);
-  return response.data;
+  return await ticketAPI.payTicket(ticketId, paymentData);
 };

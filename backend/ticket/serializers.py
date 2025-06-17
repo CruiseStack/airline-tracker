@@ -13,9 +13,10 @@ class TicketSerializer(serializers.ModelSerializer):
         fields = [
             'ticket_number', 'PNR_number', 'checkin_status', 'seat_number',
             'extra_baggage', 'ticketing_timestamp', 'flight_instance',
-            'flight_class', 'payment', 'user', 'flight_instance_details',
+            'flight_class', 'payment', 'user', 'passenger', 'flight_instance_details',
             'flight_class_details', 'payment_details', 'passenger_details'
         ]
+        read_only_fields = ['user', 'ticketing_timestamp']
         
     def get_flight_instance_details(self, obj):
         if obj.flight_instance:
@@ -44,7 +45,8 @@ class TicketSerializer(serializers.ModelSerializer):
                 'payment_number': obj.payment.payment_number,
                 'total': str(obj.payment.total),
                 'paid_cash': str(obj.payment.paid_cash),
-                'paid_points': obj.payment.paid_points,                'is_paid': obj.payment.paid_cash > 0 or obj.payment.paid_points > 0
+                'paid_points': obj.payment.paid_points,
+                'is_paid': obj.payment.paid_cash > 0 or obj.payment.paid_points > 0
             }
         return None
     
@@ -53,7 +55,10 @@ class TicketSerializer(serializers.ModelSerializer):
             return {
                 'first_name': obj.passenger.first_name,
                 'last_name': obj.passenger.last_name,
-                'email': obj.passenger.email
+                'email': obj.passenger.email,
+                'phone_number': obj.passenger.phone_number,
+                'id_type': obj.passenger.id_type,
+                'id_number': obj.passenger.id_number
             }
         return None
 
