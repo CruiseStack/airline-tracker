@@ -10,6 +10,7 @@ import Profile from './pages/Profile';
 import SearchFlights from './pages/SearchFlights';
 import ProtectedRoute from './components/ProtectedRoute';
 import FlightInfoPage from './pages/FlightInfoPage';
+import PaymentPage from './pages/PaymentPage';
 
 function App() {
   return (
@@ -39,6 +40,7 @@ function App() {
               } 
             />
             <Route path="/flight-info" element={<FlightInfoPage />} />
+            <Route path="/payment" element={<PaymentPage />} />
           </Routes>
         </div>
       </Router>
