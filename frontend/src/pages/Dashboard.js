@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
+import { ticketAPI } from "../services/api";
 
 const Dashboard = () => {
   const { user, token } = useAuth();
@@ -8,28 +9,24 @@ const Dashboard = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    if (!token) return;
+    if (!user) return;
 
-    setLoading(true);
-    fetch("/api/tickets/", {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-    })
-      .then((res) => {
-        if (!res.ok) throw new Error("Failed to fetch tickets");
-        return res.json();
-      })
-      .then((data) => {
+    const fetchTickets = async () => {
+      setLoading(true);
+      try {
+        const data = await ticketAPI.getUserTickets();
         setTickets(data);
+        setError(null);
+      } catch (err) {
+        setError('Failed to fetch tickets');
+        console.error('Error fetching tickets:', err);
+      } finally {
         setLoading(false);
-      })
-      .catch((err) => {
-        setError(err.message);
-        setLoading(false);
-      });
-  }, [token]);
+      }
+    };
+
+    fetchTickets();
+  }, [user]);
 
   const totalMiles = tickets.reduce(
     (sum, ticket) => sum + ticket.paid_points,
@@ -196,17 +193,65 @@ const Dashboard = () => {
                     Your flight history will appear here
                   </p>
                 </div>
-              )}
-
-              {!loading && !error && tickets.length > 0 && (
-                <ul>
+              )}              {!loading && !error && tickets.length > 0 && (
+                <div className="space-y-4">
                   {tickets.map((ticket) => (
-                    <li key={ticket.id} className="mb-2">
-                      Flight: {ticket.flight_number || "N/A"} - Status:{" "}
-                      {ticket.checkin_status ? "Checked In" : "Pending"}
-                    </li>
+                    <div
+                      key={ticket.id}
+                      className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
+                    >
+                      <div className="flex justify-between items-start">
+                        <div className="flex-1">
+                          <div className="flex items-center justify-between mb-2">
+                            <h4 className="text-lg font-semibold text-gray-900">
+                              Flight {ticket.flight_number}
+                            </h4>
+                            <span
+                              className={`px-2 py-1 rounded-full text-xs font-medium ${
+                                ticket.is_paid
+                                  ? "bg-green-100 text-green-800"
+                                  : "bg-yellow-100 text-yellow-800"
+                              }`}
+                            >
+                              {ticket.is_paid ? "Paid" : "Pending Payment"}
+                            </span>
+                          </div>
+                          <div className="grid grid-cols-2 gap-4 text-sm text-gray-600 mb-3">
+                            <div>
+                              <p className="font-medium">From</p>
+                              <p>{ticket.departure}</p>
+                            </div>
+                            <div>
+                              <p className="font-medium">To</p>
+                              <p>{ticket.arrival}</p>
+                            </div>
+                            <div>
+                              <p className="font-medium">Departure</p>
+                              <p>{new Date(ticket.departure_time).toLocaleString()}</p>
+                            </div>
+                            <div>
+                              <p className="font-medium">Arrival</p>
+                              <p>{new Date(ticket.arrival_time).toLocaleString()}</p>
+                            </div>
+                          </div>
+                          <div className="flex justify-between items-center text-sm">
+                            <div>
+                              <span className="font-medium">Seat:</span> {ticket.seat_number}
+                            </div>
+                            <div>
+                              <span className="font-medium">Price:</span> ${ticket.price}
+                            </div>
+                            {ticket.paid_points > 0 && (
+                              <div>
+                                <span className="font-medium">Points Used:</span> {ticket.paid_points}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   ))}
-                </ul>
+                </div>
               )}
             </div>
           </div>
