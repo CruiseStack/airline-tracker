@@ -18,14 +18,16 @@ class TicketViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         # Get the total price from request data if provided
         total_price = self.request.data.get('total_price', 100.00)  # Default price
+        paid_cash = self.request.data.get('paid_cash', total_price)  # Amount paid in cash
+        paid_points = self.request.data.get('paid_points', 0)  # Points used
         
-        # Create payment first
+        # Create payment first - mark as paid since user went through payment process
         payment = Payment.objects.create(
             base_price=total_price,
             tax=total_price * 0.1,  # 10% tax
             total=total_price * 1.1,  # Base + tax
-            paid_cash=0,  # Not paid yet
-            paid_points=0
+            paid_cash=paid_cash,  # Mark as paid
+            paid_points=paid_points
         )
         
         # Create passenger if passenger data is provided

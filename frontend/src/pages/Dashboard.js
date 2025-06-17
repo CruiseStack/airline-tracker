@@ -387,14 +387,17 @@ const Dashboard = () => {
                       </div>
                     )}
                   </div>                  {/* Passenger Information */}
-                  {selectedTicket.user_details && (
+                  {selectedTicket.passenger_details && (
                     <div>
                       <h4 className="text-md font-semibold text-gray-900 mb-2">Passenger</h4>
                       <div className="text-sm bg-gray-50 p-2 rounded">
-                        <p className="font-medium">{selectedTicket.user_details.first_name} {selectedTicket.user_details.last_name}</p>
-                        <p className="text-gray-600">{selectedTicket.user_details.email}</p>
-                        {selectedTicket.user_details.phone_number && (
-                          <p className="text-gray-600">{selectedTicket.user_details.phone_number}</p>
+                        <p className="font-medium">{selectedTicket.passenger_details.first_name} {selectedTicket.passenger_details.last_name}</p>
+                        <p className="text-gray-600">{selectedTicket.passenger_details.email}</p>
+                        {selectedTicket.passenger_details.phone_number && (
+                          <p className="text-gray-600">{selectedTicket.passenger_details.phone_number}</p>
+                        )}
+                        {selectedTicket.passenger_details.id_type && selectedTicket.passenger_details.id_number && (
+                          <p className="text-gray-600">{selectedTicket.passenger_details.id_type}: {selectedTicket.passenger_details.id_number}</p>
                         )}
                       </div>
                     </div>

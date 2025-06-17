@@ -86,9 +86,10 @@ const PaymentPage = () => {
         ticket_number: `TK${Date.now()}`, // Generate unique ticket number
         PNR_number: `PNR${Date.now()}`, // Generate unique PNR
         seat_number: "A1", // Default seat, could be made dynamic
-        extra_baggage: false,
-        checkin_status: 'not_checked_in', // Default status
+        extra_baggage: false,        checkin_status: 'not_checked_in', // Default status
         total_price: totalPrice, // Send the total price for payment creation
+        paid_cash: totalPrice, // Mark as paid in cash (since user went through payment process)
+        paid_points: 0, // No points used for now
         
         // Required foreign keys
         flight_instance: flight.id, // Use the correct FlightInstance ID
